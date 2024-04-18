@@ -1,0 +1,47 @@
+# Step 1: Setup Environment
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+
+# Step 2: Load Dataset
+# For this example, let's assume you have a CSV file named 'spam_ham_dataset.csv' with 'text' and 'label' columns.
+# Replace the file path with the actual path to your dataset.
+df = pd.read_csv('spam_ham_dataset.csv')
+
+# Step 3: Explore Data
+print("Shape of the dataset:", df.shape)
+print("Distribution of labels:\n", df['label'].value_counts())
+
+# Step 4: Preprocess Data
+# We'll do minimal preprocessing for now (e.g., lowercase conversion).
+
+# Convert text to lowercase
+df['text'] = df['text'].str.lower()
+
+# Step 5: Feature Extraction
+# Convert text data into numerical features using TF-IDF
+tfidf_vectorizer = TfidfVectorizer(max_features=5000)  # You can adjust max_features as needed
+X = tfidf_vectorizer.fit_transform(df['text'])
+y = df['label']
+
+# Step 6: Split Data
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Step 7: Train a Classifier (e.g., Naive Bayes)
+nb_classifier = MultinomialNB()
+nb_classifier.fit(X_train, y_train)
+
+# Step 8: Evaluate the Model
+y_pred = nb_classifier.predict(X_test)
+accuracy = accuracy_score(y_test, y_pred)
+print("Accuracy:", accuracy)
+
+# Print classification report
+print("\nClassification Report:")
+print(classification_report(y_test, y_pred))
+
+# Print confusion matrix
+print("\nConfusion Matrix:")
+print(confusion_matrix(y_test, y_pred))
